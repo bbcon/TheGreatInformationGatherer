@@ -26,12 +26,43 @@ class YouTubeHandler:
 
     def get_latest_video_id(self) -> Optional[str]:
         """
-        Get the video ID of the latest video in the playlist using yt-dlp.
-        No API key required!
+        Get the video ID of the latest video in the playlist.
+        Uses YouTube API if available, falls back to yt-dlp.
 
         Returns:
             Video ID or None if unable to fetch
         """
+        # Try YouTube API first if available
+        if self.api_key:
+            try:
+                from googleapiclient.discovery import build
+                print(f"Fetching latest video from playlist using YouTube API...")
+
+                youtube = build('youtube', 'v3', developerKey=self.api_key)
+                request = youtube.playlistItems().list(
+                    part='snippet',
+                    playlistId=self.playlist_id,
+                    maxResults=1
+                )
+                response = request.execute()
+
+                if 'items' in response and response['items']:
+                    video_id = response['items'][0]['snippet']['resourceId']['videoId']
+                    video_title = response['items'][0]['snippet']['title']
+                    print(f"Found latest video: {video_title} ({video_id})")
+                    return video_id
+                else:
+                    print("No videos found in playlist")
+                    return None
+
+            except ImportError:
+                print("google-api-python-client not installed, falling back to yt-dlp")
+                print("Install with: pip install google-api-python-client")
+            except Exception as e:
+                print(f"Error with YouTube API: {e}")
+                print("Falling back to yt-dlp...")
+
+        # Fallback to yt-dlp
         playlist_url = f"https://www.youtube.com/playlist?list={self.playlist_id}"
 
         ydl_opts = {
@@ -42,7 +73,7 @@ class YouTubeHandler:
         }
 
         try:
-            print(f"Fetching latest video from playlist (no API key needed)...")
+            print(f"Fetching latest video from playlist (no API key)...")
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                 info = ydl.extract_info(playlist_url, download=False)
 
