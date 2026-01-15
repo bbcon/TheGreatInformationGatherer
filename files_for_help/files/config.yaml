@@ -1,0 +1,92 @@
+# Bloomberg Markets Summarizer Configuration
+
+# Video Source
+video:
+  # Primary source - Bloomberg YouTube channel
+  source_url: "https://www.youtube.com/@markets/videos"
+  # Alternative: Bloomberg website
+  # source_url: "https://www.bloomberg.com/markets"
+  
+  # Video selection criteria
+  title_keywords:
+    - "Bloomberg Markets"
+    - "Markets Today"
+    - "The Close"
+  max_age_hours: 24  # Only process videos from last 24 hours
+
+# Transcription Settings
+transcription:
+  # FREE OPTION: Use YouTube's auto-generated captions (NO API KEY NEEDED!)
+  use_free_youtube_captions: true  # Set to true for FREE transcripts
+  
+  # Paid options (if use_free_youtube_captions is false):
+  model: "base"  # Options: tiny, base, small, medium, large
+  language: "en"
+  # Set to true to use OpenAI Whisper API instead of local model
+  use_api: false
+
+# Summary Settings
+summary:
+  # Which AI model to use for summarization
+  provider: "anthropic"  # Options: anthropic, openai
+  model: "claude-sonnet-4-20250514"  # or gpt-4-turbo
+  
+  # Summary structure
+  include_sections:
+    - executive_summary
+    - market_movements
+    - top_stories
+    - economic_data
+    - notable_quotes
+    - outlook
+  
+  # Length preferences
+  max_tokens: 2000
+  detail_level: "concise"  # Options: brief, concise, detailed
+  
+  # Focus areas (customize based on your needs)
+  focus_areas:
+    - "Equity markets"
+    - "Bond yields"
+    - "Currency movements"
+    - "Central bank policy"
+    - "Economic indicators"
+    - "Sector performance"
+
+# Output Settings
+output:
+  directory: "output"
+  formats:
+    - markdown
+    # - html
+    # - pdf
+  
+  # Keep historical summaries
+  archive: true
+  archive_days: 90  # Delete summaries older than this
+
+# Notifications (optional)
+notifications:
+  enabled: false
+  methods:
+    - email
+    # - slack
+    # - telegram
+  
+  # Send notification on errors
+  on_error: true
+  # Send notification on success with summary
+  on_success: false
+
+# Scheduling
+schedule:
+  # Time to run (24-hour format)
+  time: "07:00"
+  timezone: "America/New_York"
+
+# Logging
+logging:
+  level: "INFO"  # DEBUG, INFO, WARNING, ERROR
+  file: "logs/bloomberg_summarizer.log"
+  max_size_mb: 10
+  backup_count: 5

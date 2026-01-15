@@ -1,0 +1,8 @@
+# Core dependencies
+anthropic>=0.18.0
+python-dotenv>=1.0.0
+
+# Optional: Advanced features
+# slack-sdk>=3.19.0  # For Slack integration
+# notion-client>=2.0.0  # For Notion integration
+# beautifulsoup4>=4.12.0  # Better HTML parsing

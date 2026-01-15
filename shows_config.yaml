@@ -1,0 +1,68 @@
+# Bloomberg Shows Configuration
+# Each show has its own schedule and can be processed independently
+
+shows:
+  bloomberg_brief:
+    name: "Bloomberg Brief"
+    playlist_id: "PLGaYlBJIOoa_vIH-o9MQZHg86xdx496BW"
+    state_file: ".last_processed_bloomberg_brief"
+    publish_schedule:
+      days: ["monday", "tuesday", "wednesday", "thursday", "friday"]
+      time: "13:00"  # 1:00 PM UTC (8:00 AM ET)
+      timezone: "America/New_York"
+    fetch_delay_minutes: 30
+    enabled: true
+
+  bloomberg_surveillance:
+    name: "Bloomberg Surveillance"
+    playlist_id: "PLGaYlBJIOoa-qaI1saEniG3cR9V0Mu-PE"  # Full Shows
+    state_file: ".last_processed_surveillance"
+    publish_schedule:
+      days: ["monday", "tuesday", "wednesday", "thursday", "friday"]
+      time: "12:00"  # 12:00 PM UTC (7:00 AM ET)
+      timezone: "America/New_York"
+    fetch_delay_minutes: 60  # Wait 1 hour for full show upload
+    enabled: true
+
+  daybreak_europe:
+    name: "Bloomberg Daybreak: Europe"
+    playlist_id: "PLGaYlBJIOoa8ykANlgpdOVzhZRr88ZLP_"
+    state_file: ".last_processed_daybreak_europe"
+    publish_schedule:
+      days: ["monday", "tuesday", "wednesday", "thursday", "friday"]
+      time: "08:00"  # 8:00 AM UTC (3:00 AM ET / 9:00 AM London)
+      timezone: "Europe/London"
+    fetch_delay_minutes: 45
+    enabled: true
+
+  the_china_show:
+    name: "Bloomberg: The China Show"
+    playlist_id: "PLGaYlBJIOoa94hnb-z2i64eVPcGZPUvo9"
+    state_file: ".last_processed_china_show"
+    publish_schedule:
+      days: ["monday", "tuesday", "wednesday", "thursday", "friday"]
+      time: "06:00"  # 6:00 AM UTC (2:00 PM China time)
+      timezone: "Asia/Shanghai"
+    fetch_delay_minutes: 45
+    enabled: true
+
+  the_close:
+    name: "Bloomberg The Close"
+    playlist_id: "PLGaYlBJIOoa_oGBjRLAPh4WLfJJ_4z1IK"
+    state_file: ".last_processed_the_close"
+    publish_schedule:
+      days: ["monday", "tuesday", "wednesday", "thursday", "friday"]
+      time: "21:00"  # 9:00 PM UTC (4:00 PM ET - market close)
+      timezone: "America/New_York"
+    fetch_delay_minutes: 45
+    enabled: true
+
+# Email settings
+email:
+  # Send individual emails immediately after each show is processed
+  send_individual: true
+
+  # Or send a daily digest at a specific time with all processed shows
+  send_daily_digest: false
+  digest_time: "18:00"  # 6:00 PM UTC
+  digest_timezone: "America/New_York"

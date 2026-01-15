@@ -1,0 +1,73 @@
+# The Great Information Gatherer - Configuration File
+
+# Summary Settings
+summary:
+  # Choose summary length: 'concise', 'standard', or 'detailed'
+  length: 'standard'
+
+  # Focus areas - set to true/false to include/exclude sections
+  sections:
+    executive_summary: true
+    macro_indicators: true
+    market_outlook: true
+    central_bank_policy: true
+    risks_catalysts: true
+    technical_levels: false  # Set to true if you want technical analysis
+    actionable_takeaways: true
+
+  # Summary style preferences
+  style:
+    # Tone: 'analytical', 'concise', 'detailed'
+    tone: 'analytical'
+
+    # Focus angle: 'macro_trading', 'risk_management', 'fundamental_analysis'
+    angle: 'macro_trading'
+
+    # Include data points and specific numbers
+    include_data_points: true
+
+    # Emphasize actionable insights
+    emphasize_actionable: true
+
+# Output Settings
+output:
+  # Save formats
+  save_json: true
+  save_markdown: true
+
+  # Folder structure: 'flat', 'by_date', or 'by_show'
+  # 'by_show' creates: summaries/bloomberg_brief/2026-01-14/summary_xxx.md
+  folder_structure: 'by_show'
+
+  # Date format for folders: 'YYYY-MM-DD' or 'YYYY/MM'
+  date_format: 'YYYY-MM-DD'
+
+# Email Settings
+email:
+  # Include sections in email (can be subset of summary sections)
+  include_sections:
+    - executive_summary
+    - macro_indicators
+    - market_outlook
+    - actionable_takeaways
+
+  # Email format
+  format: 'html'  # 'html' or 'plain'
+
+  # Include link to full summary file
+  include_file_link: true
+
+# Custom Prompt Extensions (optional)
+custom_instructions: |
+  CRITICAL FORMATTING REQUIREMENTS:
+  - Be CONCISE. Use short, scannable bullet points over paragraphs.
+  - Use **bold** for critical numbers, key data points, and important takeaways.
+  - Prioritize information: Put most important items first in each section.
+  - Skip fluff - only include actionable or material information.
+  - Use short phrases and eliminate unnecessary words.
+
+  CONTENT PRIORITIES:
+  - Focus on implications for global macro trading strategies.
+  - Highlight any divergences from consensus views in **bold**.
+  - Note unusual market behavior or outlier data points.
+  - Make actionable takeaways specific and trade-ready.

@@ -1,0 +1,198 @@
+"""
+YouTube playlist and transcript handling module.
+"""
+import os
+import json
+from datetime import datetime
+from typing import Optional, Dict, List
+from youtube_transcript_api import YouTubeTranscriptApi
+from youtube_transcript_api._errors import TranscriptsDisabled, NoTranscriptFound
+
+try:
+    from googleapiclient.discovery import build
+    YOUTUBE_API_AVAILABLE = True
+except ImportError:
+    YOUTUBE_API_AVAILABLE = False
+
+try:
+    from playlist_scraper import get_latest_video_from_playlist_url
+    SCRAPER_AVAILABLE = True
+except ImportError:
+    SCRAPER_AVAILABLE = False
+
+
+class YouTubeHandler:
+    """Handles YouTube playlist and transcript operations."""
+
+    def __init__(self, playlist_id: str, api_key: Optional[str] = None):
+        """
+        Initialize YouTube handler.
+
+        Args:
+            playlist_id: YouTube playlist ID
+            api_key: Optional YouTube Data API key for better rate limits
+        """
+        self.playlist_id = playlist_id
+        self.api_key = api_key
+        self.youtube = None
+
+        if api_key and YOUTUBE_API_AVAILABLE:
+            self.youtube = build('youtube', 'v3', developerKey=api_key)
+
+    def get_latest_video_id(self) -> Optional[str]:
+        """
+        Get the video ID of the latest video in the playlist.
+
+        Returns:
+            Video ID or None if unable to fetch
+        """
+        if self.youtube:
+            return self._get_latest_video_id_api()
+        else:
+            # Fallback: construct playlist URL pattern
+            # YouTube playlist URL format: first video is typically the latest
+            # We'll need to parse the playlist page or use a workaround
+            print("YouTube API not available. Using fallback method.")
+            return self._get_latest_video_id_fallback()
+
+    def _get_latest_video_id_api(self) -> Optional[str]:
+        """Get latest video using YouTube Data API."""
+        try:
+            request = self.youtube.playlistItems().list(
+                part='snippet,contentDetails',
+                playlistId=self.playlist_id,
+                maxResults=1
+            )
+            response = request.execute()
+
+            if response.get('items'):
+                video_id = response['items'][0]['contentDetails']['videoId']
+                video_title = response['items'][0]['snippet']['title']
+                print(f"Found latest video: {video_title} ({video_id})")
+                return video_id
+            return None
+        except Exception as e:
+            print(f"Error fetching from YouTube API: {e}")
+            return None
+
+    def _get_latest_video_id_fallback(self) -> Optional[str]:
+        """
+        Fallback method to get latest video ID using web scraping.
+        """
+        if not SCRAPER_AVAILABLE:
+            print("Fallback scraper not available.")
+            print(f"Please visit: https://www.youtube.com/playlist?list={self.playlist_id}")
+            return None
+
+        print("Using web scraping to fetch latest video...")
+        result = get_latest_video_from_playlist_url(self.playlist_id)
+
+        if result:
+            return result['video_id']
+        else:
+            print(f"Please visit: https://www.youtube.com/playlist?list={self.playlist_id}")
+            print("Or provide a video ID manually with --video-id flag")
+            return None
+
+    def get_transcript(self, video_id: str) -> Optional[Dict]:
+        """
+        Get transcript for a video.
+
+        Args:
+            video_id: YouTube video ID
+
+        Returns:
+            Dictionary with transcript text and metadata, or None if unavailable
+        """
+        try:
+            # Try to get transcript (prioritize English)
+            transcript_list = YouTubeTranscriptApi.list_transcripts(video_id)
+
+            # Try to get manual transcript first (more accurate)
+            try:
+                transcript = transcript_list.find_manually_created_transcript(['en'])
+            except:
+                # Fall back to auto-generated
+                transcript = transcript_list.find_generated_transcript(['en'])
+
+            # Fetch the actual transcript
+            transcript_data = transcript.fetch()
+
+            # Combine all text segments
+            full_text = ' '.join([entry['text'] for entry in transcript_data])
+
+            return {
+                'video_id': video_id,
+                'text': full_text,
+                'language': transcript.language_code,
+                'is_generated': transcript.is_generated,
+                'fetched_at': datetime.now().isoformat()
+            }
+
+        except TranscriptsDisabled:
+            print(f"Transcripts are disabled for video {video_id}")
+            return None
+        except NoTranscriptFound:
+            print(f"No transcript found for video {video_id}")
+            return None
+        except Exception as e:
+            print(f"Error fetching transcript: {e}")
+            return None
+
+    def get_video_metadata(self, video_id: str) -> Optional[Dict]:
+        """
+        Get video metadata.
+
+        Args:
+            video_id: YouTube video ID
+
+        Returns:
+            Dictionary with video metadata or None if unavailable
+        """
+        if not self.youtube:
+            return {
+                'video_id': video_id,
+                'url': f"https://www.youtube.com/watch?v={video_id}"
+            }
+
+        try:
+            request = self.youtube.videos().list(
+                part='snippet,contentDetails',
+                id=video_id
+            )
+            response = request.execute()
+
+            if response.get('items'):
+                item = response['items'][0]['snippet']
+                return {
+                    'video_id': video_id,
+                    'title': item['title'],
+                    'description': item['description'],
+                    'published_at': item['publishedAt'],
+                    'channel_title': item['channelTitle'],
+                    'url': f"https://www.youtube.com/watch?v={video_id}"
+                }
+            return None
+        except Exception as e:
+            print(f"Error fetching video metadata: {e}")
+            return None
+
+    def save_transcript(self, transcript_data: Dict, output_dir: str = 'transcripts'):
+        """
+        Save transcript to a JSON file.
+
+        Args:
+            transcript_data: Transcript data dictionary
+            output_dir: Directory to save transcripts
+        """
+        os.makedirs(output_dir, exist_ok=True)
+
+        video_id = transcript_data['video_id']
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        filename = f"{output_dir}/{video_id}_{timestamp}.json"
+
+        with open(filename, 'w', encoding='utf-8') as f:
+            json.dump(transcript_data, f, indent=2, ensure_ascii=False)
+
+        print(f"Transcript saved to {filename}")
+        return filename
