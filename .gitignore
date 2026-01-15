@@ -20,7 +20,11 @@ ENV/
 
 # Output
 summaries/
+transcripts/
 *.log
+
+# State files (local only, not shared)
+.last_processed_*
 
 # OS
 .DS_Store
