@@ -9,6 +9,7 @@ on:
 jobs:
   process:
     runs-on: ubuntu-latest
+    environment: apis_and_emails
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
