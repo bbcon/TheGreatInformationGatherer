@@ -170,6 +170,7 @@ class YouTubeHandler:
                 '--sub-lang', 'en',
                 '--skip-download',
                 '--sub-format', 'json3',
+                '--extractor-args', 'youtube:player_client=android',  # Use Android client to avoid bot detection
                 '-o', f'temp/{video_id}',
                 video_url
             ]

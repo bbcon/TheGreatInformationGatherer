@@ -29,6 +29,11 @@ jobs:
         with:
           deno-version: v1.x
 
+      - name: Verify deno installation
+        run: |
+          which deno
+          deno --version
+
       - name: Process The Close
         env:
           YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
