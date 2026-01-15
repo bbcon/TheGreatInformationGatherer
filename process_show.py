@@ -66,9 +66,15 @@ def process_show(show_key: str, force: bool = False, send_email: bool = True):
     print("=" * 70)
 
     # Initialize handlers
+    youtube_api_key = os.getenv('YOUTUBE_API_KEY')
+    if youtube_api_key:
+        print(f"✓ YouTube API key found ({len(youtube_api_key)} chars)")
+    else:
+        print("⚠️  No YouTube API key found - will use yt-dlp fallback")
+
     yt_handler = YouTubeHandler(
         playlist_id=show_config['playlist_id'],
-        api_key=os.getenv('YOUTUBE_API_KEY')
+        api_key=youtube_api_key
     )
 
     # Get latest video
