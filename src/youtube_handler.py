@@ -99,8 +99,7 @@ class YouTubeHandler:
 
     def get_transcript(self, video_id: str) -> Optional[Dict]:
         """
-        Get transcript for a video. Tries youtube-transcript-api first,
-        then falls back to yt-dlp subtitle extraction.
+        Get transcript for a video. Tries multiple methods in order of reliability.
 
         Args:
             video_id: YouTube video ID
@@ -108,7 +107,7 @@ class YouTubeHandler:
         Returns:
             Dictionary with transcript text and metadata, or None if unavailable
         """
-        # Try Method 1: youtube-transcript-api (faster)
+        # Try Method 1: youtube-transcript-api (fastest, no API quota)
         try:
             transcript_list = YouTubeTranscriptApi.list_transcripts(video_id)
 
@@ -125,6 +124,7 @@ class YouTubeHandler:
             # Combine all text segments
             full_text = ' '.join([entry['text'] for entry in transcript_data])
 
+            print(f"Transcript extracted via youtube-transcript-api: {len(full_text)} characters")
             return {
                 'video_id': video_id,
                 'text': full_text,
@@ -136,10 +136,10 @@ class YouTubeHandler:
 
         except Exception as e:
             print(f"youtube-transcript-api failed: {e}")
-            print("Trying yt-dlp subtitle extraction...")
 
-        # Try Method 2: yt-dlp subtitle extraction (more reliable)
+        # Try Method 2: yt-dlp subtitle extraction (bypasses some bot detection)
         try:
+            print("Trying yt-dlp subtitle extraction...")
             return self._get_transcript_with_ytdlp(video_id)
         except Exception as e:
             print(f"yt-dlp subtitle extraction also failed: {e}")
