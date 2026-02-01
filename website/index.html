@@ -1,0 +1,80 @@
+---
+layout: default
+title: Home
+---
+
+<section class="hero">
+  <div class="container">
+    <div class="hero-subtitle">The Daily</div>
+    <h1 class="hero-title">Macro & Market Brief</h1>
+    <p class="hero-tagline">Cut through the noise. Get the macro story in 5 minutes.</p>
+  </div>
+</section>
+
+<div class="container">
+  <!-- Latest Daily -->
+  <section class="latest-section">
+    <div class="latest-header">
+      <h2 class="latest-title">Latest Daily Briefs</h2>
+      <a href="{{ '/daily/' | relative_url }}" class="view-all">View All &rarr;</a>
+    </div>
+
+    {% assign daily_briefs = site.daily | sort: 'date' | reverse %}
+    {% for brief in daily_briefs limit:3 %}
+    <div class="brief-card">
+      <a href="{{ brief.url | relative_url }}">
+        <div class="brief-card-date">{{ brief.date | date: "%A, %B %d, %Y" }}</div>
+        <h3 class="brief-card-title">{{ brief.title }}</h3>
+        {% if brief.lead %}
+        <p class="brief-card-excerpt">{{ brief.lead | truncate: 150 }}</p>
+        {% endif %}
+        <div class="brief-card-meta">{{ brief.reading_time | default: 5 }} min read</div>
+      </a>
+    </div>
+    {% endfor %}
+  </section>
+
+  <!-- Latest Weekly -->
+  <section class="latest-section">
+    <div class="latest-header">
+      <h2 class="latest-title">Latest Weekly Briefs</h2>
+      <a href="{{ '/weekly/' | relative_url }}" class="view-all">View All &rarr;</a>
+    </div>
+
+    {% assign weekly_briefs = site.weekly | sort: 'date' | reverse %}
+    {% for brief in weekly_briefs limit:2 %}
+    <div class="brief-card">
+      <a href="{{ brief.url | relative_url }}">
+        <div class="brief-card-date">Week of {{ brief.date | date: "%B %d, %Y" }}</div>
+        <h3 class="brief-card-title">{{ brief.title }}</h3>
+        {% if brief.lead %}
+        <p class="brief-card-excerpt">{{ brief.lead | truncate: 150 }}</p>
+        {% endif %}
+        <div class="brief-card-meta">{{ brief.reading_time | default: 8 }} min read</div>
+      </a>
+    </div>
+    {% endfor %}
+  </section>
+
+  <!-- Latest Monthly -->
+  <section class="latest-section">
+    <div class="latest-header">
+      <h2 class="latest-title">Monthly Reviews</h2>
+      <a href="{{ '/monthly/' | relative_url }}" class="view-all">View All &rarr;</a>
+    </div>
+
+    {% assign monthly_briefs = site.monthly | sort: 'date' | reverse %}
+    {% for brief in monthly_briefs limit:1 %}
+    <div class="brief-card">
+      <a href="{{ brief.url | relative_url }}">
+        <div class="brief-card-date">{{ brief.date | date: "%B %Y" }}</div>
+        <h3 class="brief-card-title">{{ brief.title }}</h3>
+        {% if brief.lead %}
+        <p class="brief-card-excerpt">{{ brief.lead | truncate: 200 }}</p>
+        {% endif %}
+        <div class="brief-card-meta">{{ brief.reading_time | default: 12 }} min read</div>
+      </a>
+    </div>
+    {% endfor %}
+  </section>
+</div>

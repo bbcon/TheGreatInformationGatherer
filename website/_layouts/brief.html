@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ page.title }} | {{ site.title }}</title>
+  <meta name="description" content="{{ page.excerpt | default: site.description | strip_html | truncate: 160 }}">
+  <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
+  <link rel="icon" type="image/png" href="{{ '/assets/images/favicon.png' | relative_url }}">
+</head>
+<body>
+  <div class="site-wrapper">
+    {% include header.html %}
+
+    <header class="brief-header">
+      <div class="container">
+        <div class="brief-header-content">
+          <div class="brief-meta">
+            <div class="brief-type-label">
+              {% if page.brief_type == 'daily' %}Daily Brief
+              {% elsif page.brief_type == 'weekly' %}Weekly Brief
+              {% elsif page.brief_type == 'monthly' %}Monthly Brief
+              {% endif %}
+            </div>
+            <h1 class="brief-date">{{ page.title }}</h1>
+          </div>
+          <div class="brief-info">
+            {% if page.day_name %}<span>{{ page.day_name }}</span>{% endif %}
+            {% if page.reading_time %}<span>{{ page.reading_time }} min read</span>{% endif %}
+          </div>
+        </div>
+      </div>
+    </header>
+    <div class="accent-line"></div>
+
+    <main class="main-content">
+      <div class="container">
+        <article class="brief-content">
+          {% if page.lead %}
+          <div class="brief-lead">
+            <p>{{ page.lead }}</p>
+            <div class="brief-lead-subtitle">
+              {% if page.brief_type == 'daily' %}What moved markets today, by order of importance.
+              {% elsif page.brief_type == 'weekly' %}The week's key themes and developments.
+              {% elsif page.brief_type == 'monthly' %}What really mattered this month.
+              {% endif %}
+            </div>
+          </div>
+          {% endif %}
+
+          <div class="brief-body">
+            {{ content }}
+          </div>
+        </article>
+
+        <!-- Navigation -->
+        <nav class="brief-nav" style="margin-top: 32px; display: flex; justify-content: space-between;">
+          {% if page.previous %}
+          <a href="{{ page.previous.url | relative_url }}" style="color: #888888;">&larr; {{ page.previous.title }}</a>
+          {% else %}
+          <span></span>
+          {% endif %}
+
+          <a href="{{ '/' | append: page.brief_type | relative_url }}" style="color: #5597cb;">View All {{ page.brief_type | capitalize }} Briefs</a>
+
+          {% if page.next %}
+          <a href="{{ page.next.url | relative_url }}" style="color: #888888;">{{ page.next.title }} &rarr;</a>
+          {% else %}
+          <span></span>
+          {% endif %}
+        </nav>
+      </div>
+    </main>
+
+    {% include footer.html %}
+  </div>
+</body>
+</html>

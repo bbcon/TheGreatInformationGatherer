@@ -1,0 +1,39 @@
+---
+layout: default
+title: Monthly Reviews
+---
+
+<div class="container">
+  <section class="section-nav">
+    <div class="section-tabs">
+      <a href="{{ '/daily/' | relative_url }}" class="section-tab">Daily</a>
+      <a href="{{ '/weekly/' | relative_url }}" class="section-tab">Weekly</a>
+      <a href="{{ '/monthly/' | relative_url }}" class="section-tab active">Monthly</a>
+    </div>
+  </section>
+
+  <header class="archive-header">
+    <h1 class="archive-title">Monthly Reviews</h1>
+    <p class="archive-description">What really mattered each month, cutting through the noise with hindsight.</p>
+  </header>
+
+  {% assign monthly_briefs = site.monthly | sort: 'date' | reverse %}
+  {% assign briefs_by_year = monthly_briefs | group_by_exp: "brief", "brief.date | date: '%Y'" %}
+
+  {% for year_group in briefs_by_year %}
+  <h2 class="archive-year">{{ year_group.name }}</h2>
+
+  {% for brief in year_group.items %}
+  <div class="brief-card">
+    <a href="{{ brief.url | relative_url }}">
+      <div class="brief-card-date">{{ brief.date | date: "%B %Y" }}</div>
+      <h3 class="brief-card-title">{{ brief.title }}</h3>
+      {% if brief.lead %}
+      <p class="brief-card-excerpt">{{ brief.lead | truncate: 200 }}</p>
+      {% endif %}
+      <div class="brief-card-meta">{{ brief.reading_time | default: 12 }} min read</div>
+    </a>
+  </div>
+  {% endfor %}
+  {% endfor %}
+</div>

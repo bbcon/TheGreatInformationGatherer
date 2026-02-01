@@ -1,0 +1,244 @@
+# Knowledge Base Configuration
+# Settings for processing foundational/stock knowledge content
+# (as opposed to daily market updates which prioritize brevity)
+
+# Default settings for all knowledge content
+defaults:
+  model: "claude-sonnet-4-5-20250929"
+  max_tokens: 8192
+  temperature: 0.3
+
+  # Core philosophy: DEPTH over BREVITY
+  # - Explain mechanisms and logical chains
+  # - Help understand WHY, not just WHAT
+  # - Preserve intellectual nuance
+  # - Capture frameworks and mental models
+
+# Content type-specific configurations
+content_types:
+
+  lecture:
+    description: "Academic lectures, conference talks, seminars"
+    folder: "lectures"
+    prompt_template: |
+      You are summarizing an academic lecture. This requires COMPREHENSIVE treatment.
+
+      PHILOSOPHY:
+      - This is about UNDERSTANDING, not quick updates
+      - Explain mechanisms, logical chains, and causation thoroughly
+      - Preserve intellectual nuance and complexity
+      - Capture frameworks and mental models the speaker introduces
+      - Show how arguments build on each other
+      - Include theoretical context and references
+
+      TARGET LENGTH: 10-15 minute read
+
+      STRUCTURE YOUR SUMMARY:
+
+      ## 1. Core Thesis & Intellectual Framework
+      - Main argument in 2-3 substantial paragraphs
+      - What theoretical frameworks does the speaker draw on?
+      - What is the intellectual problem being wrestled with?
+      - Why does this matter?
+
+      ## 2. Key Concepts Defined
+      For each major concept:
+      - Clear definition
+      - Why it matters
+      - How it relates to other concepts
+      - Examples given
+
+      ## 3. Detailed Argument Analysis
+      - Walk through the logical chain of the argument
+      - Show how each point builds to the next
+      - Include sub-arguments and nuances
+      - Note any tensions or contradictions acknowledged
+
+      ## 4. Historical/Theoretical Context
+      - What prior work does this build on?
+      - What debates is this intervening in?
+      - Historical parallels drawn
+
+      ## 5. Country/Regional/Sector Deep Dives (if applicable)
+      - Detailed treatment of each case study
+      - Specifics, data points, mechanisms
+
+      ## 6. Contrarian/Provocative Arguments
+      - List each surprising or contrarian claim
+      - Explain the reasoning behind it
+      - Why this challenges conventional wisdom
+
+      ## 7. Implications & Applications
+      - For macro-finance analysis
+      - For investment/market thinking
+      - For understanding current events
+
+      ## 8. Key Quotes Worth Remembering
+      - 5-7 memorable quotes with context
+
+      FORMATTING:
+      - Use **bold** for key terms, names, numbers, concepts
+      - Explain jargon when introduced
+      - Use bullet points for lists, but full paragraphs for complex arguments
+      - Include specific numbers/data when mentioned
+
+  podcast:
+    description: "Podcast episodes, interviews, conversations"
+    folder: "podcasts"
+    prompt_template: |
+      You are summarizing a podcast episode or interview. Capture the conversation's insights.
+
+      PHILOSOPHY:
+      - Preserve the back-and-forth dynamic where relevant
+      - Distinguish between host questions and guest insights
+      - Capture spontaneous insights that emerge from dialogue
+      - Note areas of agreement/disagreement between participants
+
+      TARGET LENGTH: ~10 minute read
+
+      STRUCTURE YOUR SUMMARY:
+
+      ## 1. Episode Overview
+      - Guest background and why they're relevant
+      - Main topic(s) covered
+      - Key thesis or framing
+
+      ## 2. Major Themes Discussed
+      For each theme:
+      - The question/framing
+      - The guest's perspective
+      - Key insights and mechanisms explained
+      - Supporting evidence/examples given
+
+      ## 3. Frameworks & Mental Models
+      - Any frameworks introduced for thinking about problems
+      - How to apply them
+
+      ## 4. Contrarian Takes
+      - Views that challenge consensus
+      - Reasoning provided
+
+      ## 5. Practical Implications
+      - For markets/investing
+      - For understanding macro
+      - Actionable takeaways
+
+      ## 6. Notable Quotes
+      - 3-5 memorable quotes
+
+      FORMATTING:
+      - Use **bold** for key terms and insights
+      - Attribute views clearly (e.g., "Guest argues that...")
+
+  paper:
+    description: "Academic papers, research reports, white papers"
+    folder: "papers"
+    prompt_template: |
+      You are summarizing an academic paper or research report. Preserve rigor.
+
+      PHILOSOPHY:
+      - Maintain academic precision
+      - Explain methodology clearly
+      - Distinguish findings from interpretation
+      - Note limitations acknowledged by authors
+
+      TARGET LENGTH: ~10 minute read
+
+      STRUCTURE YOUR SUMMARY:
+
+      ## 1. Research Question & Contribution
+      - What question does this paper answer?
+      - What's the novel contribution?
+      - Where does this fit in the literature?
+
+      ## 2. Methodology
+      - Data sources
+      - Analytical approach
+      - Key assumptions
+
+      ## 3. Main Findings
+      - Primary results with specific numbers
+      - Statistical significance where relevant
+      - Robustness checks
+
+      ## 4. Mechanisms & Interpretation
+      - How do authors explain findings?
+      - Causal channels proposed
+      - Alternative explanations considered
+
+      ## 5. Limitations & Caveats
+      - What the paper doesn't show
+      - Data limitations
+      - External validity concerns
+
+      ## 6. Implications
+      - For theory
+      - For policy
+      - For markets/investment
+
+      ## 7. Key Tables/Figures
+      - Describe most important results
+
+      FORMATTING:
+      - Use **bold** for key findings and numbers
+      - Include specific statistics where meaningful
+
+  book:
+    description: "Book summaries, chapter notes"
+    folder: "books"
+    prompt_template: |
+      You are summarizing a book or book chapter. Capture the full arc of the argument.
+
+      PHILOSOPHY:
+      - Books develop arguments over hundreds of pages - preserve that structure
+      - Show how chapters/sections build on each other
+      - Capture both the forest (main thesis) and trees (supporting arguments)
+      - Note the author's rhetorical strategy
+
+      TARGET LENGTH: ~20 minute read for full book, ~10 for chapter
+
+      STRUCTURE YOUR SUMMARY:
+
+      ## 1. Central Thesis
+      - Main argument in 2-3 paragraphs
+      - Why the author wrote this book
+      - What intervention is being made
+
+      ## 2. Book Structure Overview
+      - How the book is organized
+      - What each major section accomplishes
+
+      ## 3. Chapter-by-Chapter Summary (or Section-by-Section)
+      For each major section:
+      - Key arguments
+      - Evidence presented
+      - How it advances the overall thesis
+
+      ## 4. Key Concepts & Frameworks
+      - Major ideas introduced
+      - How to apply them
+
+      ## 5. Historical Context & Case Studies
+      - Major examples used
+      - How they illustrate arguments
+
+      ## 6. Author's Perspective & Biases
+      - Where is the author coming from?
+      - What assumptions underlie the argument?
+
+      ## 7. Critiques & Limitations
+      - What's missing or underdeveloped?
+      - Counterarguments not addressed
+
+      ## 8. Implications & Applications
+      - For your own thinking
+      - For macro/markets
+
+      ## 9. Key Quotes
+      - 5-10 memorable passages
+
+# How to invoke:
+# When user asks to summarize content for knowledge base:
+# 1. Identify content type (lecture, podcast, paper, book)
+# 2. Use appropriate prompt_template
+# 3. Save to knowledge/{folder}/YYYY-MM-DD_author_title-slug.md

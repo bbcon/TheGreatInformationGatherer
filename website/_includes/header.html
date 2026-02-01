@@ -1,0 +1,18 @@
+<header class="site-header">
+  <div class="container">
+    <div class="header-content">
+      <a href="{{ '/' | relative_url }}" class="logo">
+        <div class="logo-mark">M</div>
+        <div class="logo-text">
+          <span class="logo-subtitle">The Daily</span>
+          <span class="logo-title">Macro & Market Brief</span>
+        </div>
+      </a>
+      <nav class="nav-links">
+        <a href="{{ '/daily/' | relative_url }}" {% if page.url contains '/daily' %}class="active"{% endif %}>Daily</a>
+        <a href="{{ '/weekly/' | relative_url }}" {% if page.url contains '/weekly' %}class="active"{% endif %}>Weekly</a>
+        <a href="{{ '/monthly/' | relative_url }}" {% if page.url contains '/monthly' %}class="active"{% endif %}>Monthly</a>
+      </nav>
+    </div>
+  </div>
+</header>

@@ -1,0 +1,22 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="200" height="200" rx="20" fill="#0f172a"/>
+
+  <!-- Market pulse / chart line -->
+  <polyline
+    points="30,130 60,130 80,90 100,110 120,50 140,80 160,70 180,85"
+    fill="none"
+    stroke="#3b82f6"
+    stroke-width="4"
+    stroke-linecap="round"
+    stroke-linejoin="round"/>
+
+  <!-- DMB text below -->
+  <text x="100" y="170"
+        font-family="Arial, sans-serif"
+        font-size="28"
+        font-weight="bold"
+        fill="#ffffff"
+        text-anchor="middle"
+        letter-spacing="8">DMB</text>
+</svg>

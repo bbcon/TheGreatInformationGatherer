@@ -1,0 +1,48 @@
+# Site settings
+title: The Daily Macro & Market Brief
+description: Cut through the noise. Get the macro story in 5 minutes.
+url: "" # Update with your GitHub Pages URL
+baseurl: "/TheGreatInformationGatherer" # Update if using custom domain
+
+# Build settings
+markdown: kramdown
+highlighter: rouge
+
+# Collections for briefs
+collections:
+  daily:
+    output: true
+    permalink: /daily/:name/
+  weekly:
+    output: true
+    permalink: /weekly/:name/
+  monthly:
+    output: true
+    permalink: /monthly/:name/
+
+# Default front matter
+defaults:
+  - scope:
+      path: ""
+      type: "daily"
+    values:
+      layout: "brief"
+      brief_type: "daily"
+  - scope:
+      path: ""
+      type: "weekly"
+    values:
+      layout: "brief"
+      brief_type: "weekly"
+  - scope:
+      path: ""
+      type: "monthly"
+    values:
+      layout: "brief"
+      brief_type: "monthly"
+
+# Exclude from build
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - README.md

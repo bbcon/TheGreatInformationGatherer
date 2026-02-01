@@ -42,8 +42,15 @@ def mark_as_processed(video_id: str, state_file: str):
     with open(state_file, 'w') as f:
         f.write(video_id)
 
-def process_show(show_key: str, force: bool = False, send_email: bool = True):
-    """Process a single show."""
+def process_show(show_key: str, force: bool = False, send_email: bool = True, video_id: str = None):
+    """Process a single show.
+
+    Args:
+        show_key: The show key from shows_config.yaml
+        force: Force reprocessing even if already processed
+        send_email: Whether to send email notification
+        video_id: Optional specific video ID to process (instead of latest)
+    """
     load_dotenv()
 
     # Load configuration
@@ -77,15 +84,19 @@ def process_show(show_key: str, force: bool = False, send_email: bool = True):
         api_key=youtube_api_key
     )
 
-    # Get latest video
-    print(f"\n[1/6] Fetching latest video...")
-    video_id = yt_handler.get_latest_video_id()
+    # Get video ID (either specified or latest)
+    if video_id:
+        print(f"\n[1/6] Using specified video ID...")
+        print(f"✓ Video ID: {video_id}")
+    else:
+        print(f"\n[1/6] Fetching latest video...")
+        video_id = yt_handler.get_latest_video_id()
 
-    if not video_id:
-        print("✗ Could not fetch latest video ID")
-        sys.exit(1)
+        if not video_id:
+            print("✗ Could not fetch latest video ID")
+            sys.exit(1)
 
-    print(f"✓ Found video: {video_id}")
+        print(f"✓ Found video: {video_id}")
 
     # Check if already processed
     if not force and check_if_processed(video_id, show_config['state_file']):
@@ -117,7 +128,23 @@ def process_show(show_key: str, force: bool = False, send_email: bool = True):
 
     # Generate summary
     print(f"\n[4/6] Generating summary with Claude...")
-    summarizer = MacroTradingSummarizer(api_key=os.getenv('ANTHROPIC_API_KEY'))
+
+    # Load config with show-specific custom instructions
+    from config_handler import ConfigHandler
+    config_handler = ConfigHandler()
+
+    # Add show-specific custom instructions if available
+    if 'custom_instructions' in show_config:
+        config_handler.config['custom_instructions'] = (
+            config_handler.config.get('custom_instructions', '') +
+            '\n\n' +
+            show_config['custom_instructions']
+        ).strip()
+
+    summarizer = MacroTradingSummarizer(
+        api_key=os.getenv('ANTHROPIC_API_KEY'),
+        config=config_handler
+    )
 
     try:
         summary_data = summarizer.generate_summary(
@@ -147,7 +174,21 @@ def process_show(show_key: str, force: bool = False, send_email: bool = True):
         folder_structure=folder_structure,
         show_name=show_key
     )
-    saved_files = output_manager.save_summary(summary_data, markdown_content)
+
+    # Use video publish date for folder organization if available
+    publish_date = None
+    if metadata and metadata.get('published_at'):
+        try:
+            # Parse published_at (format: YYYYMMDD or ISO format)
+            pub_str = metadata['published_at']
+            if len(pub_str) == 8 and pub_str.isdigit():
+                publish_date = datetime.strptime(pub_str, '%Y%m%d')
+            elif 'T' in pub_str:
+                publish_date = datetime.fromisoformat(pub_str.replace('Z', '+00:00')).replace(tzinfo=None)
+        except Exception as e:
+            print(f"  Warning: Could not parse publish date: {e}")
+
+    saved_files = output_manager.save_summary(summary_data, markdown_content, date=publish_date)
 
     print(f"✓ Files saved:")
     for file_type, file_path in saved_files.items():
@@ -217,6 +258,11 @@ def main():
         action='store_true',
         help='List all configured shows'
     )
+    parser.add_argument(
+        '--video-id',
+        type=str,
+        help='Process a specific video by ID (instead of fetching latest)'
+    )
 
     args = parser.parse_args()
 
@@ -234,7 +280,7 @@ def main():
         print("\n" + "=" * 70)
         sys.exit(0)
 
-    process_show(args.show, force=args.force, send_email=not args.no_email)
+    process_show(args.show, force=args.force, send_email=not args.no_email, video_id=args.video_id)
 
 if __name__ == '__main__':
     main()

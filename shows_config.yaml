@@ -12,6 +12,28 @@ shows:
       timezone: "America/New_York"
     fetch_delay_minutes: 30
     enabled: true
+    custom_instructions: |
+      TONE & STYLE:
+      - Use measured, analytical language - avoid sensationalism
+      - Strong words (historic, unprecedented, crashed, plunged) only when truly justified
+      - Default to neutral verbs: fell/rose, declined/gained
+      - Let data speak - "gold fell 8%" needs no embellishment
+      - Acknowledge uncertainty where appropriate - use "appears to," "may signal," "suggests"
+
+      CLARITY REQUIREMENTS:
+
+      1. **Explain Causation Clearly**: Always explain WHY events matter and HOW they affect markets
+         - Bad: "US jobless claims: unexpected drop—pressuring Treasuries"
+         - Good: "US jobless claims fell unexpectedly (strong labor market) → Treasury yields rose as Fed rate cut expectations diminished"
+
+      2. **Be Explicit About Directional Moves**:
+         - Always clarify: prices vs yields, up vs down, stronger vs weaker
+         - Example: "Treasury prices fell (yields up)" not just "Treasuries pressured"
+         - Example: "Dollar strengthened to 1.08 vs EUR" not just "Dollar moves"
+
+      3. **Connect Dots Between Events**: Show clear cause-and-effect chains
+         - Link data → market reaction → policy implications
+         - Explain transmission mechanisms (e.g., "higher yields → pressure on equity valuations")
 
   bloomberg_surveillance:
     name: "Bloomberg Surveillance"
@@ -23,6 +45,28 @@ shows:
       timezone: "America/New_York"
     fetch_delay_minutes: 60  # Wait 1 hour for full show upload
     enabled: true
+    custom_instructions: |
+      TONE & STYLE:
+      - Use measured, analytical language - avoid sensationalism
+      - Strong words (historic, unprecedented, crashed, plunged) only when truly justified
+      - Default to neutral verbs: fell/rose, declined/gained
+      - Let data speak - "gold fell 8%" needs no embellishment
+      - Acknowledge uncertainty where appropriate - use "appears to," "may signal," "suggests"
+
+      CLARITY REQUIREMENTS:
+
+      1. **Explain Causation Clearly**: Always explain WHY events matter and HOW they affect markets
+         - Bad: "US jobless claims: unexpected drop—pressuring Treasuries"
+         - Good: "US jobless claims fell unexpectedly (strong labor market) → Treasury yields rose as Fed rate cut expectations diminished"
+
+      2. **Be Explicit About Directional Moves**:
+         - Always clarify: prices vs yields, up vs down, stronger vs weaker
+         - Example: "Treasury prices fell (yields up)" not just "Treasuries pressured"
+         - Example: "Dollar strengthened to 1.08 vs EUR" not just "Dollar moves"
+
+      3. **Connect Dots Between Events**: Show clear cause-and-effect chains
+         - Link data → market reaction → policy implications
+         - Explain transmission mechanisms (e.g., "higher yields → pressure on equity valuations")
 
   daybreak_europe:
     name: "Bloomberg Daybreak: Europe"
@@ -34,6 +78,28 @@ shows:
       timezone: "Europe/London"
     fetch_delay_minutes: 45
     enabled: true
+    custom_instructions: |
+      TONE & STYLE:
+      - Use measured, analytical language - avoid sensationalism
+      - Strong words (historic, unprecedented, crashed, plunged) only when truly justified
+      - Default to neutral verbs: fell/rose, declined/gained
+      - Let data speak - "gold fell 8%" needs no embellishment
+      - Acknowledge uncertainty where appropriate - use "appears to," "may signal," "suggests"
+
+      CLARITY REQUIREMENTS:
+
+      1. **Explain Causation Clearly**: Always explain WHY events matter and HOW they affect markets
+         - Bad: "US jobless claims: unexpected drop—pressuring Treasuries"
+         - Good: "US jobless claims fell unexpectedly (strong labor market) → Treasury yields rose as Fed rate cut expectations diminished"
+
+      2. **Be Explicit About Directional Moves**:
+         - Always clarify: prices vs yields, up vs down, stronger vs weaker
+         - Example: "Treasury prices fell (yields up)" not just "Treasuries pressured"
+         - Example: "EUR/USD fell to 1.08" not just "EUR moves"
+
+      3. **Connect Dots Between Events**: Show clear cause-and-effect chains
+         - Link data → market reaction → policy implications
+         - Explain transmission mechanisms (e.g., "stronger EUR → pressure on European exporters")
 
   the_china_show:
     name: "Bloomberg: The China Show"
@@ -45,6 +111,36 @@ shows:
       timezone: "Asia/Shanghai"
     fetch_delay_minutes: 45
     enabled: true
+    custom_instructions: |
+      TONE & STYLE:
+      - Use measured, analytical language - avoid sensationalism
+      - Strong words (historic, unprecedented, crashed, plunged) only when truly justified
+      - Default to neutral verbs: fell/rose, declined/gained
+      - Let data speak - "gold fell 8%" needs no embellishment
+      - Acknowledge uncertainty where appropriate - use "appears to," "may signal," "suggests"
+
+      CHINA SHOW SPECIFIC REQUIREMENTS:
+
+      1. **Explain Causation Clearly**: Always explain WHY events matter and HOW they affect markets
+         - Bad: "US jobless claims: unexpected drop—pressuring Treasuries"
+         - Good: "US jobless claims fell unexpectedly (strong labor market) → Treasury yields rose as Fed rate cut expectations diminished"
+
+      2. **Be Explicit About Directional Moves**:
+         - Always clarify: prices vs yields, up vs down, stronger vs weaker
+         - Example: "Treasury prices fell (yields up)" not just "Treasuries pressured"
+
+      3. **Add Regional Context**: Since this covers China/Asia markets, provide extra context for:
+         - Chinese policy decisions and their implications
+         - Regional geopolitical events and why they matter
+         - Cross-border capital flows and currency implications
+         - How China-specific events affect global markets
+
+      4. **Explain Market Mechanics**: Don't assume knowledge of:
+         - How Chinese markets work (A-shares vs H-shares, onshore vs offshore yuan)
+         - Policy tools used by PBoC or other Asian central banks
+         - Regional trading relationships and dependencies
+
+      5. **Connect Global to Regional**: When US/European events are discussed, explain the specific impact on Asian markets
 
   the_close:
     name: "Bloomberg The Close"
@@ -56,6 +152,28 @@ shows:
       timezone: "America/New_York"
     fetch_delay_minutes: 45
     enabled: true
+    custom_instructions: |
+      TONE & STYLE:
+      - Use measured, analytical language - avoid sensationalism
+      - Strong words (historic, unprecedented, crashed, plunged) only when truly justified
+      - Default to neutral verbs: fell/rose, declined/gained
+      - Let data speak - "gold fell 8%" needs no embellishment
+      - Acknowledge uncertainty where appropriate - use "appears to," "may signal," "suggests"
+
+      CLARITY REQUIREMENTS:
+
+      1. **Explain Causation Clearly**: Always explain WHY events matter and HOW they affect markets
+         - Bad: "US jobless claims: unexpected drop—pressuring Treasuries"
+         - Good: "US jobless claims fell unexpectedly (strong labor market) → Treasury yields rose as Fed rate cut expectations diminished"
+
+      2. **Be Explicit About Directional Moves**:
+         - Always clarify: prices vs yields, up vs down, stronger vs weaker
+         - Example: "Treasury prices fell (yields up)" not just "Treasuries pressured"
+         - Example: "S&P 500 down 1.2% to 4,850" not just "stocks lower"
+
+      3. **Connect Dots Between Events**: Show clear cause-and-effect chains
+         - Link data → market reaction → sector impacts
+         - Explain why sectors moved (e.g., "Tech fell as higher yields pressured valuations")
 
 # Email settings
 email:
