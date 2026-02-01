@@ -44,7 +44,8 @@ ACKNOWLEDGE UNCERTAINTY:
 GUIDELINES:
 - Identify 4-6 themes that defined the month
 - Distinguish signal from noise - what actually mattered vs what seemed important at the time
-- Use specific numbers and data points
+- Use specific numbers and data points WITH TIME REFERENCES (e.g., "gold peaked at $5,500 mid-month before falling 8% on Jan 31", "S&P touched 7,000 in the final week")
+- When citing a specific move or event, include when it happened (early/mid/late month, or specific week) - this context is essential
 - Track how narratives evolved across the month
 - Report facts, let readers draw conclusions
 - Do NOT mention Bloomberg, TV shows, or any source attribution

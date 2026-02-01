@@ -39,6 +39,11 @@ Automated system to extract Bloomberg TV transcripts, generate macro summaries v
 - Distinguish between facts (what happened) and interpretation (what it might mean)
 - Macro is never black and white - be comfortable with ambiguity
 
+## Time References in Weekly/Monthly Briefs
+- When citing specific numbers in weekly briefs, include the day (e.g., "gold fell 8% on Friday", "S&P touched 7,000 on Tuesday")
+- When citing specific numbers in monthly briefs, include timing (e.g., "gold peaked mid-month", "dollar weakness accelerated in the final week")
+- Numbers without time context are less useful - readers need to know WHEN things happened
+
 ## Common Mistakes to Avoid
 - Don't use **text** markdown in HTML - convert to <strong>
 - Email logos must use HTML tables, not SVG/base64 (email client compatibility)

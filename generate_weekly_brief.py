@@ -41,7 +41,8 @@ ACKNOWLEDGE UNCERTAINTY:
 GUIDELINES:
 - Identify 3-5 key themes that defined the week
 - Track how stories evolved across the week
-- Use specific numbers and data points
+- Use specific numbers and data points WITH DAY REFERENCES (e.g., "gold fell 8% on Friday", "S&P touched 7,000 on Tuesday")
+- When citing a specific move or event, always include which day it happened - this context is essential
 - Note any significant reversals or surprises
 - Let readers draw their own conclusions - report facts, not opinions
 - Do NOT mention Bloomberg, TV shows, or any source attribution
