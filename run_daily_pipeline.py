@@ -14,7 +14,7 @@ Cron:
 import os
 import sys
 import subprocess
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -87,7 +87,7 @@ def get_previous_trading_day(date_str: str) -> str:
 def main():
     LOG_DIR.mkdir(exist_ok=True)
 
-    today = datetime.utcnow().strftime('%Y-%m-%d')
+    today = datetime.now(timezone.utc).strftime('%Y-%m-%d')
     prev_trading_day = get_previous_trading_day(today)
 
     log("=" * 60)
@@ -106,7 +106,7 @@ def main():
     # 1. Process The Close from previous trading day
     log(f"\n--- Processing The Close from {prev_trading_day} ---")
     success = run_command(
-        ['python3', 'process_show.py', EVENING_SHOW, '--no-email'],
+        [sys.executable, 'process_show.py', EVENING_SHOW, '--no-email'],
         f"Process {EVENING_SHOW} ({prev_trading_day})"
     )
     if success:
@@ -116,7 +116,7 @@ def main():
     log(f"\n--- Processing morning shows for {today} ---")
     for show in MORNING_SHOWS:
         success = run_command(
-            ['python3', 'process_show.py', show, '--no-email'],
+            [sys.executable, 'process_show.py', show, '--no-email'],
             f"Process {show}"
         )
         if success:
@@ -130,19 +130,19 @@ def main():
 
     # 3. Generate daily brief for today
     run_command(
-        ['python3', 'generate_daily_brief.py', '--date', today],
+        [sys.executable, 'generate_daily_brief.py', '--date', today],
         f"Generate daily brief for {today}"
     )
 
     # 4. Send daily brief email
     run_command(
-        ['python3', 'send_briefs.py', '--daily', today],
+        [sys.executable, 'send_briefs.py', '--daily', today],
         f"Send daily brief email for {today}"
     )
 
     # 5. Sync to website
     run_command(
-        ['python3', 'sync_to_website.py'],
+        [sys.executable, 'sync_to_website.py'],
         "Sync to website"
     )
 
@@ -152,11 +152,11 @@ def main():
         year, week, _ = date_obj.isocalendar()
         week_str = f'{year}-W{week:02d}'
         run_command(
-            ['python3', 'generate_weekly_brief.py', '--week', week_str, '--force'],
+            [sys.executable, 'generate_weekly_brief.py', '--week', week_str, '--force'],
             f"Generate weekly brief for {week_str}"
         )
         run_command(
-            ['python3', 'send_briefs.py', '--weekly', week_str],
+            [sys.executable, 'send_briefs.py', '--weekly', week_str],
             f"Send weekly brief email for {week_str}"
         )
 
@@ -167,7 +167,7 @@ def main():
     if tomorrow.month != date_obj.month:
         monthly_generated = date_obj.strftime('%Y-%m')
         run_command(
-            ['python3', 'generate_monthly_brief.py', '--month', monthly_generated, '--force'],
+            [sys.executable, 'generate_monthly_brief.py', '--month', monthly_generated, '--force'],
             f"Generate monthly brief for {date_obj.strftime('%B %Y')}"
         )
     # Case 2: First Monday of new month - catch weekend month-ends
@@ -176,20 +176,21 @@ def main():
         if prev_month_last_day.weekday() >= 5:  # Previous month ended on Sat/Sun
             monthly_generated = prev_month_last_day.strftime('%Y-%m')
             run_command(
-                ['python3', 'generate_monthly_brief.py', '--month', monthly_generated, '--force'],
+                [sys.executable, 'generate_monthly_brief.py', '--month', monthly_generated, '--force'],
                 f"Generate monthly brief for {prev_month_last_day.strftime('%B %Y')}"
             )
 
-    if monthly_generated:
-        run_command(
-            ['python3', 'send_briefs.py', '--monthly', monthly_generated],
-            f"Send monthly brief email for {monthly_generated}"
-        )
+    # Note: Monthly email not yet implemented in send_briefs.py
+    # if monthly_generated:
+    #     run_command(
+    #         [sys.executable, 'send_briefs.py', '--monthly', monthly_generated],
+    #         f"Send monthly brief email for {monthly_generated}"
+    #     )
 
     # 8. Push to GitHub (updates GitHub Pages)
     log(f"\n--- Pushing to GitHub ---")
     run_command(
-        ['git', 'add', 'summaries/', 'website/_daily/', 'website/_weekly/', 'website/_monthly/'],
+        ['git', 'add', 'website/_daily/', 'website/_weekly/', 'website/_monthly/'],
         "Stage changes"
     )
     run_command(

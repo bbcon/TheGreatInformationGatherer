@@ -7,7 +7,7 @@
 
     <key>ProgramArguments</key>
     <array>
-        <string>/usr/bin/python3</string>
+        <string>/Users/brendanberthold/Dropbox/My Computer/GitHub/TheGreatInformationGatherer/.venv/bin/python3</string>
         <string>/Users/brendanberthold/Dropbox/My Computer/GitHub/TheGreatInformationGatherer/run_daily_pipeline.py</string>
     </array>
 
