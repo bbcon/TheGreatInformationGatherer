@@ -14,11 +14,25 @@ Cron:
 import os
 import sys
 import subprocess
+import socket
+import time
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from dotenv import load_dotenv
 
 load_dotenv()
+
+
+def wait_for_network(timeout: int = 120) -> bool:
+    """Wait for network connectivity before proceeding."""
+    start = time.time()
+    while time.time() - start < timeout:
+        try:
+            socket.create_connection(("www.youtube.com", 443), timeout=5)
+            return True
+        except OSError:
+            time.sleep(5)
+    return False
 
 PROJECT_DIR = Path(__file__).parent
 LOG_DIR = PROJECT_DIR / 'logs'
@@ -86,6 +100,13 @@ def get_previous_trading_day(date_str: str) -> str:
 
 def main():
     LOG_DIR.mkdir(exist_ok=True)
+
+    # Wait for network (Mac may have just woken from sleep)
+    log("Waiting for network...")
+    if not wait_for_network(timeout=120):
+        log("ERROR: No network connection after 2 minutes. Aborting.")
+        return
+    log("Network OK")
 
     today = datetime.now(timezone.utc).strftime('%Y-%m-%d')
     prev_trading_day = get_previous_trading_day(today)
