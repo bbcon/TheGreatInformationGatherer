@@ -53,7 +53,7 @@
     <key>EnvironmentVariables</key>
     <dict>
         <key>PATH</key>
-        <string>/usr/local/bin:/usr/bin:/bin</string>
+        <string>/Users/brendanberthold/Dropbox/My Computer/GitHub/TheGreatInformationGatherer/.venv/bin:/usr/local/bin:/usr/bin:/bin</string>
     </dict>
 </dict>
 </plist>
