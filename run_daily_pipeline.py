@@ -161,13 +161,7 @@ def main():
         f"Send daily brief email for {today}"
     )
 
-    # 5. Sync to website
-    run_command(
-        [sys.executable, 'sync_to_website.py'],
-        "Sync to website"
-    )
-
-    # 6. Check if it's end of week (Friday) - generate weekly brief
+    # 5. Check if it's end of week (Friday) - generate weekly brief
     date_obj = datetime.strptime(today, '%Y-%m-%d')
     if date_obj.weekday() == 4:  # Friday
         year, week, _ = date_obj.isocalendar()
@@ -181,7 +175,7 @@ def main():
             f"Send weekly brief email for {week_str}"
         )
 
-    # 7. Check if it's end of month - generate monthly brief
+    # 6. Check if it's end of month - generate monthly brief
     # Case 1: Today is last weekday of month (tomorrow is different month)
     tomorrow = date_obj + timedelta(days=1)
     monthly_generated = None
@@ -207,6 +201,12 @@ def main():
     #         [sys.executable, 'send_briefs.py', '--monthly', monthly_generated],
     #         f"Send monthly brief email for {monthly_generated}"
     #     )
+
+    # 7. Sync to website (after all briefs generated)
+    run_command(
+        [sys.executable, 'sync_to_website.py'],
+        "Sync to website"
+    )
 
     # 8. Push to GitHub (updates GitHub Pages)
     log(f"\n--- Pushing to GitHub ---")
