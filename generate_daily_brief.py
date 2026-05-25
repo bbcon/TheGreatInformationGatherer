@@ -67,7 +67,8 @@ WHAT TO EXCLUDE:
 - Repetitive coverage (consolidate)
 
 OUTPUT FORMAT:
-- Start with a 1-2 sentence lead summarizing the day's most important development
+- Start with 2-3 short sentences summarizing the day's most important developments
+- IMPORTANT: Do NOT combine unrelated themes into a single sentence. Each sentence in the intro should cover ONE theme. Bad: "TSMC's sales surge validated AI demand, overshadowing UK political uncertainty." Good: "TSMC's 37% January sales surge validated continued AI infrastructure demand. Separately, UK political uncertainty grew around PM Starmer's fragile position."
 - Use **bold section headers** to organize content by theme (e.g., **Fed & Monetary Policy**, **Equities & Earnings**, **Commodities**, etc.)
 - Within each section, use a MIX of:
   - Short introductory sentence or context (1-2 sentences max)
@@ -138,6 +139,51 @@ def generate_daily_brief(date_str: str, summaries: dict) -> str:
         system=SYSTEM_PROMPT
     )
 
+    brief_text = response.content[0].text
+    gen_usage = response.usage
+
+    # Verification pass: check names and titles for accuracy
+    brief_text, verify_usage = verify_names(client, brief_text, summaries_text)
+
+    # Combine usage
+    total_usage = type(gen_usage)(
+        input_tokens=gen_usage.input_tokens + verify_usage.input_tokens,
+        output_tokens=gen_usage.output_tokens + verify_usage.output_tokens,
+    )
+
+    return brief_text, total_usage
+
+
+VERIFY_PROMPT = """Review the following daily brief for name and title accuracy by cross-referencing against the source transcripts.
+
+DAILY BRIEF:
+{brief}
+
+SOURCE TRANSCRIPTS:
+{sources}
+
+Check every proper noun (person names, titles, roles) in the brief against the source transcripts. Look for:
+1. Misspelled names (e.g., "Myron" when transcript says "Miran")
+2. Wrong titles or roles (e.g., wrong job title, wrong country's PM)
+3. Names that don't appear in any transcript (possibly hallucinated or substituted from your training data)
+
+If you find errors, output the corrected brief in full. If no errors are found, output the brief unchanged.
+
+Output ONLY the brief text, nothing else -- no preamble, no commentary."""
+
+
+def verify_names(client: anthropic.Anthropic, brief: str, sources: str) -> tuple:
+    """Verify and correct names/titles in the brief against source transcripts."""
+    response = client.messages.create(
+        model="claude-sonnet-4-20250514",
+        max_tokens=2500,
+        messages=[
+            {
+                "role": "user",
+                "content": VERIFY_PROMPT.format(brief=brief, sources=sources)
+            }
+        ],
+    )
     return response.content[0].text, response.usage
 
 

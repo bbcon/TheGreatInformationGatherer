@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.macrobrief.catchup</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Users/brendanberthold/Dropbox/My Computer/GitHub/TheGreatInformationGatherer/.venv/bin/python3</string>
+        <string>/Users/brendanberthold/Dropbox/My Computer/GitHub/TheGreatInformationGatherer/run_daily_pipeline.py</string>
+    </array>
+
+    <key>WorkingDirectory</key>
+    <string>/Users/brendanberthold/Dropbox/My Computer/GitHub/TheGreatInformationGatherer</string>
+
+    <!-- Run on login/boot to catch missed scheduled runs -->
+    <key>RunAtLoad</key>
+    <true/>
+
+    <!-- Also re-check every hour as a safety net -->
+    <key>StartInterval</key>
+    <integer>3600</integer>
+
+    <key>StandardOutPath</key>
+    <string>/Users/brendanberthold/Dropbox/My Computer/GitHub/TheGreatInformationGatherer/logs/daily_pipeline_catchup.log</string>
+
+    <key>StandardErrorPath</key>
+    <string>/Users/brendanberthold/Dropbox/My Computer/GitHub/TheGreatInformationGatherer/logs/daily_pipeline_catchup_error.log</string>
+
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>/Users/brendanberthold/Dropbox/My Computer/GitHub/TheGreatInformationGatherer/.venv/bin:/usr/local/bin:/usr/bin:/bin</string>
+    </dict>
+</dict>
+</plist>

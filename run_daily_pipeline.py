@@ -101,6 +101,12 @@ def get_previous_trading_day(date_str: str) -> str:
 def main():
     LOG_DIR.mkdir(exist_ok=True)
 
+    # Don't run before 14:00 UTC (3:00 PM CET) - shows haven't all aired yet
+    now_utc = datetime.now(timezone.utc)
+    if now_utc.hour < 14:
+        log(f"Too early ({now_utc.strftime('%H:%M')} UTC). Pipeline runs after 14:00 UTC.")
+        return
+
     # Wait for network (Mac may have just woken from sleep)
     log("Waiting for network...")
     if not wait_for_network(timeout=120):
@@ -109,6 +115,13 @@ def main():
     log("Network OK")
 
     today = datetime.now(timezone.utc).strftime('%Y-%m-%d')
+
+    # Idempotency: skip if today's brief already exists (safe to run multiple times)
+    daily_brief_path = PROJECT_DIR / 'summaries' / '_daily_briefs' / f'{today}_daily_brief.md'
+    if daily_brief_path.exists():
+        log(f"Daily brief for {today} already generated. Skipping.")
+        return
+
     prev_trading_day = get_previous_trading_day(today)
 
     log("=" * 60)
