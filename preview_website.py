@@ -96,6 +96,7 @@ def render_header():
             <a href="/daily/">Daily</a>
             <a href="/weekly/">Weekly</a>
             <a href="/monthly/">Monthly</a>
+            <a href="/knowledge/">Knowledge</a>
           </nav>
         </div>
       </div>
@@ -250,7 +251,185 @@ def render_index(brief_type, briefs, css):
 
     return render_page(titles.get(brief_type, 'Briefs'), content, css)
 
-def render_home(all_briefs, css):
+def load_knowledge():
+    """Load all knowledge base items from website/_knowledge/, recursively."""
+    items = []
+    base = WEBSITE_DIR / '_knowledge'
+
+    if base.exists():
+        for md_file in sorted(base.rglob('*.md')):
+            content = md_file.read_text()
+            front_matter, body = parse_front_matter(content)
+            rel = md_file.relative_to(base).with_suffix('')
+            front_matter['_path'] = rel.as_posix()
+            front_matter['_url'] = f'/knowledge/{rel.as_posix()}/'
+            front_matter['_body'] = body
+            front_matter['_tags'] = re.findall(r'"([^"]*)"', front_matter.get('tags', ''))
+            items.append(front_matter)
+
+    return items
+
+
+KNOWLEDGE_TYPE_LABELS = {'podcast': 'Podcasts', 'lecture': 'Lectures', 'paper': 'Papers', 'book': 'Books'}
+
+
+def render_knowledge_card(item):
+    byline = item.get('byline') or item.get('outlet') or ''
+    outlet = item.get('outlet', '')
+    meta_line = byline
+    if outlet and outlet != byline:
+        meta_line = f'{byline} &middot; {outlet}' if byline else outlet
+    reading_time = item.get('reading_time', '5')
+    return f'''
+    <div class="brief-card knowledge-card">
+      <a href="{item['_url']}">
+        <div class="brief-card-date">{meta_line}</div>
+        <h3 class="brief-card-title">{item.get('title', '')}</h3>
+        <div class="brief-card-meta">{reading_time} min read</div>
+      </a>
+    </div>
+    '''
+
+
+def render_knowledge_index(items, css):
+    tabs_html = ''.join(
+        f'<a href="#{ctype}s" class="section-tab">{label} ({len([i for i in items if i.get("content_type") == ctype])})</a>'
+        for ctype, label in KNOWLEDGE_TYPE_LABELS.items()
+    )
+
+    sections_html = ''
+    for ctype, label in KNOWLEDGE_TYPE_LABELS.items():
+        group = [i for i in items if i.get('content_type') == ctype]
+        sections_html += f'<section id="{ctype}s"><h2 class="archive-year">{label}</h2>'
+
+        if ctype == 'podcast':
+            metas = [i for i in group if i.get('is_meta') == 'true']
+            eps = [i for i in group if i.get('is_meta') != 'true']
+            series_names = sorted({i.get('series', '') for i in eps}, reverse=True)
+
+            if not series_names:
+                sections_html += '<p class="archive-description">No podcast summaries yet.</p>'
+
+            for sname in series_names:
+                series_eps = sorted(
+                    (e for e in eps if e.get('series', '') == sname),
+                    key=lambda x: x.get('date', ''), reverse=True
+                )
+                meta = next((m for m in metas if m.get('series') == sname), None)
+                header_name = sname if sname else 'Other Episodes'
+                meta_link = (f'<a href="{meta["_url"]}" class="knowledge-series-meta-link">'
+                             f'Read season meta-summary &rarr;</a>') if meta else ''
+                cards = ''.join(render_knowledge_card(e) for e in series_eps)
+                sections_html += f'''
+                <div class="knowledge-series">
+                  <div class="knowledge-series-header">
+                    <h3 class="knowledge-series-title">{header_name}</h3>
+                    {meta_link}
+                  </div>
+                  <div class="knowledge-grid">{cards}</div>
+                </div>
+                '''
+        else:
+            if not group:
+                sections_html += f'<p class="archive-description">No {label.lower()} yet.</p>'
+            group_sorted = sorted(group, key=lambda x: x.get('date', ''), reverse=True)
+            cards = ''.join(render_knowledge_card(i) for i in group_sorted)
+            sections_html += f'<div class="knowledge-grid">{cards}</div>'
+
+        sections_html += '</section>'
+
+    content = f'''
+    <div class="container">
+      <header class="archive-header">
+        <h1 class="archive-title">Knowledge Base</h1>
+        <p class="archive-description">Foundational research on macro, markets, geopolitics, and the energy transition — lectures, papers, books, and podcast deep-dives.</p>
+      </header>
+      <section class="section-nav"><div class="section-tabs">{tabs_html}</div></section>
+      {sections_html}
+    </div>
+    '''
+    return render_page('Knowledge Base', content, css)
+
+
+def render_knowledge_page(item, css):
+    title = item.get('title', 'Knowledge')
+    content_type = item.get('content_type', '')
+    is_meta = item.get('is_meta') == 'true'
+    series = item.get('series', '')
+    byline = item.get('byline', '')
+    outlet = item.get('outlet', '')
+    date = item.get('date', '')
+    duration = item.get('duration', '')
+    reading_time = item.get('reading_time', '')
+    source_url = item.get('source_url', '')
+    tags = item.get('_tags', [])
+
+    label = 'Season Meta-Summary' if is_meta else KNOWLEDGE_TYPE_LABELS.get(content_type + 's', content_type.title())
+    label_line = f'{label} &middot; {series}' if series else label
+
+    tags_html = ''.join(f'<span class="knowledge-tag">#{t}</span>' for t in tags)
+    source_link = (f'<a href="{source_url}" target="_blank" rel="noopener" class="knowledge-source-link">'
+                   f'View source{f" &middot; {duration}" if duration else ""} &rarr;</a>') if source_url else ''
+    subhead = ''
+    if tags or source_url:
+        subhead = f'<div class="knowledge-subhead"><div class="knowledge-tags">{tags_html}</div>{source_link}</div>'
+
+    header_html = f'''
+    <header class="brief-header">
+      <div class="container">
+        <div class="brief-header-content">
+          <div class="brief-meta">
+            <div class="brief-type-label">{label_line}</div>
+            <h1 class="brief-date">{title}</h1>
+          </div>
+          <div class="brief-info">
+            {f"<span>{byline}</span>" if byline else ""}
+            {f"<span>{outlet}</span>" if outlet else ""}
+            {f"<span>{date}</span>" if date else ""}
+            {f"<span>{reading_time} min read</span>" if reading_time else ""}
+          </div>
+        </div>
+      </div>
+    </header>
+    <div class="accent-line"></div>
+    '''
+
+    content_html = f'''
+    <div class="container">
+      <article class="brief-content">
+        {subhead}
+        <div class="brief-body">
+          {markdown_to_html(item.get('_body', ''))}
+        </div>
+      </article>
+      <nav class="brief-nav" style="margin-top: 32px;">
+        <a href="/knowledge/" style="color: #5597cb;">&larr; All Knowledge Base Summaries</a>
+      </nav>
+    </div>
+    '''
+
+    return f'''<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{title} | The Daily Macro & Market Brief</title>
+  <style>{css}</style>
+</head>
+<body>
+  <div class="site-wrapper">
+    {render_header().replace('class="brief-header"', '')}
+    {header_html}
+    <main class="main-content">
+      {content_html}
+    </main>
+    {render_footer()}
+  </div>
+</body>
+</html>'''
+
+
+def render_home(all_briefs, css, knowledge_items=None):
     sections = ''
     for brief_type, briefs in all_briefs.items():
         titles = {'daily': 'Latest Daily Briefs', 'weekly': 'Latest Weekly Briefs', 'monthly': 'Monthly Reviews'}
@@ -280,6 +459,22 @@ def render_home(all_briefs, css):
             <a href="/{brief_type}/" class="view-all">View All &rarr;</a>
           </div>
           {cards}
+        </section>
+        '''
+
+    if knowledge_items:
+        eps_only = [i for i in knowledge_items if i.get('is_meta') != 'true']
+        knowledge_cards = ''.join(
+            render_knowledge_card(i) for i in
+            sorted(eps_only, key=lambda x: x.get('date', ''), reverse=True)[:3]
+        )
+        sections += f'''
+        <section class="latest-section">
+          <div class="latest-header">
+            <h2 class="latest-title">Latest Knowledge Base</h2>
+            <a href="/knowledge/" class="view-all">View All &rarr;</a>
+          </div>
+          {knowledge_cards}
         </section>
         '''
 
@@ -325,7 +520,7 @@ class BriefHandler(http.server.SimpleHTTPRequestHandler):
                 'weekly': load_briefs('weekly'),
                 'monthly': load_briefs('monthly'),
             }
-            html = render_home(all_briefs, self.css)
+            html = render_home(all_briefs, self.css, knowledge_items=load_knowledge())
             self.send_html(html)
             return
 
@@ -348,6 +543,21 @@ class BriefHandler(http.server.SimpleHTTPRequestHandler):
                     html = render_brief(front_matter, body, self.css)
                     self.send_html(html)
                     return
+
+        # Knowledge base index
+        if path == '/knowledge/' or path == '/knowledge':
+            html = render_knowledge_index(load_knowledge(), self.css)
+            self.send_html(html)
+            return
+
+        # Individual knowledge base pages (nested path, e.g. podcasts/cleaning-up-s16/ep225)
+        if path.startswith('/knowledge/'):
+            rel = path[len('/knowledge/'):].strip('/')
+            item = next((i for i in load_knowledge() if i.get('_path') == rel), None)
+            if item:
+                html = render_knowledge_page(item, self.css)
+                self.send_html(html)
+                return
 
         # Static files (CSS, images)
         super().do_GET()

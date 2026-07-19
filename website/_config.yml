@@ -19,6 +19,9 @@ collections:
   monthly:
     output: true
     permalink: /monthly/:name/
+  knowledge:
+    output: true
+    permalink: /knowledge/:path/
 
 # Default front matter
 defaults:
@@ -40,6 +43,11 @@ defaults:
     values:
       layout: "brief"
       brief_type: "monthly"
+  - scope:
+      path: ""
+      type: "knowledge"
+    values:
+      layout: "knowledge"
 
 # Exclude from build
 exclude:

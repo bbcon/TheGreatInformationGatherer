@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ page.title }} | {{ site.title }}</title>
+  <meta name="description" content="{{ page.excerpt | default: site.description | strip_html | truncate: 160 }}">
+  <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
+  <link rel="icon" type="image/png" href="{{ '/assets/images/favicon.png' | relative_url }}">
+</head>
+<body>
+  <div class="site-wrapper">
+    {% include header.html %}
+
+    <header class="brief-header">
+      <div class="container">
+        <div class="brief-header-content">
+          <div class="brief-meta">
+            <div class="brief-type-label">
+              {% if page.is_meta %}Season Meta-Summary
+              {% elsif page.content_type == 'podcast' %}Podcast
+              {% elsif page.content_type == 'lecture' %}Lecture
+              {% elsif page.content_type == 'paper' %}Paper
+              {% elsif page.content_type == 'book' %}Book
+              {% else %}Knowledge
+              {% endif %}
+              {% if page.series %} &middot; {{ page.series }}{% endif %}
+            </div>
+            <h1 class="brief-date">{{ page.title }}</h1>
+          </div>
+          <div class="brief-info">
+            {% if page.byline %}<span>{{ page.byline }}</span>{% endif %}
+            {% if page.outlet %}<span>{{ page.outlet }}</span>{% endif %}
+            {% if page.date %}<span>{{ page.date | date: "%B %d, %Y" }}</span>{% endif %}
+            {% if page.reading_time %}<span>{{ page.reading_time }} min read</span>{% endif %}
+          </div>
+        </div>
+      </div>
+    </header>
+    <div class="accent-line"></div>
+
+    <main class="main-content">
+      <div class="container">
+        <article class="brief-content">
+          {% if page.tags.size > 0 or page.source_url != "" %}
+          <div class="knowledge-subhead">
+            {% if page.tags.size > 0 %}
+            <div class="knowledge-tags">
+              {% for tag in page.tags %}<span class="knowledge-tag">#{{ tag }}</span>{% endfor %}
+            </div>
+            {% endif %}
+            {% if page.source_url != "" %}
+            <a href="{{ page.source_url }}" target="_blank" rel="noopener" class="knowledge-source-link">View source{% if page.duration != "" %} &middot; {{ page.duration }}{% endif %} &rarr;</a>
+            {% endif %}
+          </div>
+          {% endif %}
+
+          <div class="brief-body">
+            {{ content }}
+          </div>
+        </article>
+
+        <nav class="brief-nav" style="margin-top: 32px; display: flex; justify-content: space-between;">
+          <a href="{{ '/knowledge/' | relative_url }}" style="color: #5597cb;">&larr; All Knowledge Base Summaries</a>
+          <span></span>
+        </nav>
+      </div>
+    </main>
+
+    {% include footer.html %}
+  </div>
+</body>
+</html>

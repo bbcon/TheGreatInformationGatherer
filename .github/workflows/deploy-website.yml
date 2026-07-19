@@ -8,7 +8,9 @@ on:
       - 'summaries/_daily_briefs/**'
       - 'summaries/_weekly_briefs/**'
       - 'summaries/_monthly_briefs/**'
+      - 'knowledge/**'
       - 'sync_to_website.py'
+      - 'sync_knowledge_to_website.py'
   workflow_dispatch:
 
 permissions:
@@ -34,6 +36,9 @@ jobs:
 
       - name: Sync briefs to website
         run: python3 sync_to_website.py --force
+
+      - name: Sync knowledge base to website
+        run: python3 sync_knowledge_to_website.py --force
 
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1

@@ -1,0 +1,115 @@
+---
+layout: default
+title: Knowledge Base
+---
+
+<div class="container">
+  <header class="archive-header">
+    <h1 class="archive-title">Knowledge Base</h1>
+    <p class="archive-description">Foundational research on macro, markets, geopolitics, and the energy transition — lectures, papers, books, and podcast deep-dives.</p>
+  </header>
+
+  {% assign all_items = site.knowledge %}
+  {% assign podcasts = all_items | where: "content_type", "podcast" %}
+  {% assign lectures = all_items | where: "content_type", "lecture" | sort: "date" | reverse %}
+  {% assign papers = all_items | where: "content_type", "paper" | sort: "date" | reverse %}
+  {% assign books = all_items | where: "content_type", "book" | sort: "date" | reverse %}
+
+  <section class="section-nav">
+    <div class="section-tabs">
+      <a href="#podcasts" class="section-tab">Podcasts ({{ podcasts.size }})</a>
+      <a href="#lectures" class="section-tab">Lectures ({{ lectures.size }})</a>
+      <a href="#papers" class="section-tab">Papers ({{ papers.size }})</a>
+      <a href="#books" class="section-tab">Books ({{ books.size }})</a>
+    </div>
+  </section>
+
+  <section id="podcasts">
+    <h2 class="archive-year">Podcasts</h2>
+
+    {% assign meta_summaries = podcasts | where: "is_meta", true %}
+    {% assign episodes_only = podcasts | where_exp: "item", "item.is_meta != true" %}
+    {% assign podcast_series = episodes_only | group_by: "series" | sort: "name" | reverse %}
+
+    {% if podcast_series.size == 0 %}
+    <p class="archive-description">No podcast summaries yet.</p>
+    {% endif %}
+
+    {% for group in podcast_series %}
+      {% assign series_name = group.name %}
+      {% assign eps = group.items | sort: "date" | reverse %}
+      {% assign meta = meta_summaries | where: "series", series_name | first %}
+      <div class="knowledge-series">
+        <div class="knowledge-series-header">
+          <h3 class="knowledge-series-title">{% if series_name == "" %}Other Episodes{% else %}{{ series_name }}{% endif %}</h3>
+          {% if meta %}<a href="{{ meta.url | relative_url }}" class="knowledge-series-meta-link">Read season meta-summary &rarr;</a>{% endif %}
+        </div>
+        <div class="knowledge-grid">
+          {% for ep in eps %}
+          <div class="brief-card knowledge-card">
+            <a href="{{ ep.url | relative_url }}">
+              <div class="brief-card-date">{{ ep.byline | default: ep.outlet }}</div>
+              <h3 class="brief-card-title">{{ ep.title }}</h3>
+              <div class="brief-card-meta">{{ ep.reading_time }} min read</div>
+            </a>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endfor %}
+  </section>
+
+  <section id="lectures">
+    <h2 class="archive-year">Lectures</h2>
+    {% if lectures.size == 0 %}
+    <p class="archive-description">No lecture summaries yet.</p>
+    {% endif %}
+    <div class="knowledge-grid">
+      {% for item in lectures %}
+      <div class="brief-card knowledge-card">
+        <a href="{{ item.url | relative_url }}">
+          <div class="brief-card-date">{{ item.byline }}{% if item.outlet %} &middot; {{ item.outlet }}{% endif %}</div>
+          <h3 class="brief-card-title">{{ item.title }}</h3>
+          <div class="brief-card-meta">{{ item.reading_time }} min read</div>
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section id="papers">
+    <h2 class="archive-year">Papers</h2>
+    {% if papers.size == 0 %}
+    <p class="archive-description">No paper summaries yet.</p>
+    {% endif %}
+    <div class="knowledge-grid">
+      {% for item in papers %}
+      <div class="brief-card knowledge-card">
+        <a href="{{ item.url | relative_url }}">
+          <div class="brief-card-date">{{ item.byline }}{% if item.outlet %} &middot; {{ item.outlet }}{% endif %}</div>
+          <h3 class="brief-card-title">{{ item.title }}</h3>
+          <div class="brief-card-meta">{{ item.reading_time }} min read</div>
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section id="books">
+    <h2 class="archive-year">Books</h2>
+    {% if books.size == 0 %}
+    <p class="archive-description">No book summaries yet.</p>
+    {% endif %}
+    <div class="knowledge-grid">
+      {% for item in books %}
+      <div class="brief-card knowledge-card">
+        <a href="{{ item.url | relative_url }}">
+          <div class="brief-card-date">{{ item.byline }}{% if item.outlet %} &middot; {{ item.outlet }}{% endif %}</div>
+          <h3 class="brief-card-title">{{ item.title }}</h3>
+          <div class="brief-card-meta">{{ item.reading_time }} min read</div>
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+</div>

@@ -77,4 +77,23 @@ title: Home
     </div>
     {% endfor %}
   </section>
+
+  <!-- Latest Knowledge -->
+  <section class="latest-section">
+    <div class="latest-header">
+      <h2 class="latest-title">Latest Knowledge Base</h2>
+      <a href="{{ '/knowledge/' | relative_url }}" class="view-all">View All &rarr;</a>
+    </div>
+
+    {% assign knowledge_items = site.knowledge | where_exp: "item", "item.is_meta != true" | sort: 'date' | reverse %}
+    {% for item in knowledge_items limit:3 %}
+    <div class="brief-card">
+      <a href="{{ item.url | relative_url }}">
+        <div class="brief-card-date">{{ item.byline | default: item.outlet }}</div>
+        <h3 class="brief-card-title">{{ item.title }}</h3>
+        <div class="brief-card-meta">{{ item.reading_time | default: 5 }} min read</div>
+      </a>
+    </div>
+    {% endfor %}
+  </section>
 </div>
