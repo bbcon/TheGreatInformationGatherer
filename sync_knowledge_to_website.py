@@ -72,7 +72,7 @@ def parse_knowledge_file(path: Path, content_type: str, series: str):
     body = '\n'.join(lines[body_start:]).strip()
 
     byline = fields.get('guest') or fields.get('speaker') or fields.get('author')
-    outlet = fields.get('channel') or fields.get('podcast')
+    outlet = fields.get('channel') or fields.get('podcast') or fields.get('publisher')
     source = fields.get('source', '')
     source_url = fields.get('url') or (source if source.startswith('http') else '')
     if not outlet and source and not source.startswith('http'):
